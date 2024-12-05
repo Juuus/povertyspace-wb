@@ -12,8 +12,7 @@ import pickle
 import math
 
 
-# Access the Flask server object
-server = app.server
+
 
 # Load data
 with open('PHI_NORMALIZED.pkl', 'rb') as f:
@@ -29,6 +28,10 @@ country_year_options = [{'label': ctyr, 'value': ctyr} for ctyr in country_year_
 
 # Initialize the Dash app
 app = dash.Dash(__name__)
+
+# Access the Flask server object
+server = app.server
+
 
 # Define the app layout
 app.layout = html.Div([
