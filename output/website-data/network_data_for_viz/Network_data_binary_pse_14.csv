@@ -1,0 +1,11 @@
+,Child mortality,Nutrition,School attendance,Schooling,Electricity,Drinking water,Sanitation,Housing,Cooking fuel,Assets
+Child mortality,0.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Nutrition,1.0,0.0,1.0,0.0,1.0,1.0,1.0,0.0,1.0,1.0
+School attendance,1.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Schooling,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0
+Electricity,0.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0
+Drinking water,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0
+Sanitation,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0
+Housing,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0
+Cooking fuel,0.0,1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0
+Assets,0.0,1.0,0.0,1.0,1.0,0.0,1.0,1.0,1.0,0.0
