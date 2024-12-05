@@ -11,6 +11,10 @@ import matplotlib.pyplot as plt
 import pickle
 import math
 
+
+# Access the Flask server object
+server = app.server
+
 # Load data
 with open('PHI_NORMALIZED.pkl', 'rb') as f:
     PHI_NORMALIZED = pickle.load(f)
