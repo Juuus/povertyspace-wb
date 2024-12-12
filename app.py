@@ -11,9 +11,6 @@ import matplotlib.pyplot as plt
 import pickle
 import math
 
-
-
-
 # Load data
 with open('PHI_NORMALIZED.pkl', 'rb') as f:
     PHI_NORMALIZED = pickle.load(f)
@@ -26,68 +23,23 @@ TT_FINAL['year'] = TT_FINAL['year'].astype(str).str.zfill(2)
 country_year_options = sorted(TT_FINAL['full_country_year'].unique())
 country_year_options = [{'label': ctyr, 'value': ctyr} for ctyr in country_year_options]
 
+TT_FINAL['country_slug'] = TT_FINAL['country'].apply(lambda x: x[:3].lower())
+TT_FINAL['year_short'] = TT_FINAL['year'].apply(lambda x: x[-2:])
+TT_FINAL['slug'] = TT_FINAL['country_slug'] + TT_FINAL['year_short']
+
+slug_map = TT_FINAL[['full_country_year', 'slug']].drop_duplicates().set_index('slug')['full_country_year'].to_dict()
+
+
 # Initialize the Dash app
 app = dash.Dash(__name__)
 
-# Access the Flask server object
-server = app.server
-
-
-# Define the app layout
 app.layout = html.Div([
+    dcc.Location(id='url', refresh=False),
     html.H1("Poverty Space Visualization", style={'textAlign': 'center','fontFamily': 'Arial'}),
-    # Input controls
-    html.Div([
-        # Wrap label and dropdown in a Div
-        html.Div([
-            html.Label("Select Country and Year:", style={
-                'fontFamily': 'Arial',
-                'fontSize': '14px',
-                'color': 'black',
-                'textAlign': 'center',
-                'display': 'block',
-                'marginBottom': '10px'
-            }),
-            dcc.Dropdown(
-                id='country-year-dropdown',
-                options=country_year_options,
-                value='Kyrgyz Republic 2006',
-                placeholder='Select a country and year',
-                style={
-                    'width': '300px',
-                    'fontFamily': 'Arial',
-                    'fontSize': '14px',
-                    'color': 'black',
-                    'display': 'block',
-                    'marginLeft': 'auto',
-                    'marginRight': 'auto'
-                },
-                searchable=True,
-                clearable=True
-            ),
-        ], style={
-            'display': 'flex',
-            'flexDirection': 'column',
-            'alignItems': 'center',
-            'justifyContent': 'center'
-        }),
-        # Center the button as well
-        html.Button('Update Graph', id='update-button', n_clicks=0, style={
-            'fontFamily': 'Arial',
-            'fontSize': '14px',
-            'color': 'black',
-            'marginTop': '20px',
-            'display': 'block',
-            'marginLeft': 'auto',
-            'marginRight': 'auto'
-        }),
-    ], style={
-        'textAlign': 'center',
-        'marginTop': '20px',
-        'marginBottom': '20px',
-    }),
+
     # Optional horizontal line
     html.Hr(style={'width': '80%', 'margin': '0 auto'}),
+
     # Description and graph
     html.Div([
         dcc.Markdown(
@@ -102,6 +54,7 @@ app.layout = html.Div([
             }
         ),
         dcc.Graph(id='network-graph'),
+
         # Add download buttons
         html.Div([
             html.Button('Download Poverty Space Data', id='download-phi-button', n_clicks=0, style={
@@ -120,6 +73,7 @@ app.layout = html.Div([
             dcc.Download(id='download-filtered')
         ], style={'textAlign': 'center', 'marginTop': '20px'}),
     ], style={'width': '800px', 'margin': '0 auto'}),
+
     dcc.Store(id='selected-node'),
     # Add dcc.Store components to store data frames
     dcc.Store(id='phi-data'),
@@ -133,14 +87,19 @@ app.layout = html.Div([
      Output('description', 'children'),
      Output('phi-data', 'data'),
      Output('filtered-data', 'data')],
-    [Input('update-button', 'n_clicks'),
-     Input('network-graph', 'clickData')],
-    [State('country-year-dropdown', 'value'),
-     State('selected-node', 'data')]
+    [Input('network-graph', 'clickData'),
+     Input('url', 'pathname')],
+    [State('selected-node', 'data')]
 )
 
-def update_graph(n_clicks, clickData, ctry_yr,selected_node):
+def update_graph(clickData, pathname, selected_node):
     try:
+        slug = pathname.strip('/')
+        if not slug or slug not in slug_map:
+            # Default to a known value
+            ctry_yr = 'kgz06'
+        else:
+            ctry_yr = slug_map[slug]
         rows = TT_FINAL[TT_FINAL['full_country_year'] == ctry_yr].copy()
         ctry_init = rows['country'].unique()[0]
         ctry_full = rows['country_full'].unique()[0]
