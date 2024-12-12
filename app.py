@@ -33,6 +33,9 @@ slug_map = TT_FINAL[['full_country_year', 'slug']].drop_duplicates().set_index('
 # Initialize the Dash app
 app = dash.Dash(__name__)
 
+# Access the Flask server object
+server = app.server
+
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.H1("Poverty Space Visualization", style={'textAlign': 'center','fontFamily': 'Arial'}),
